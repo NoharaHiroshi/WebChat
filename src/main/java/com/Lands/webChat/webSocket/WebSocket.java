@@ -54,6 +54,7 @@ public class WebSocket {
     public void onOpen(Session session, @PathParam("userId") String userId) {
         LOG.info("用户【" + userId + "】登录");
         this.session = session;
+        this.userId = userId;
         OnlineAddCount();
         webSocketSet.add(this);
         try {
@@ -79,6 +80,17 @@ public class WebSocket {
     @OnMessage
     public void onMessage(String message, Session session, @PathParam("userId") String userId) {
         LOG.info("用户【" + userId + "】发送信息： " + message);
+
+        for (WebSocket item : webSocketSet) {
+
+        }
+    }
+
+    /**
+     * 处理客户端发来的消息
+     */
+    public void messageHandler(String message) {
+        
     }
 
     /** 发送信息
