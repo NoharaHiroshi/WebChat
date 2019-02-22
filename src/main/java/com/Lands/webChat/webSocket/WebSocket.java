@@ -1,5 +1,7 @@
 package com.Lands.webChat.webSocket;
 
+import com.Lands.webChat.util.Message;
+import com.google.gson.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -10,8 +12,11 @@ import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
+import java.awt.event.MouseWheelEvent;
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.HashMap;
+import java.util.Map;
 
 
 // 创建一个WebSocket站点
@@ -79,18 +84,17 @@ public class WebSocket {
      */
     @OnMessage
     public void onMessage(String message, Session session, @PathParam("userId") String userId) {
-        LOG.info("用户【" + userId + "】发送信息： " + message);
-
-        for (WebSocket item : webSocketSet) {
-
-        }
+        messageHandler(message);
     }
 
     /**
      * 处理客户端发来的消息
      */
-    public void messageHandler(String message) {
-        
+    public Message messageHandler(String message) {
+        Gson json = new Gson();
+        Message msg = json.fromJson(message, Message.class);
+        LOG.info("用户【" + userId + "】发送信息： " + msg.toString());
+        return msg;
     }
 
     /** 发送信息
