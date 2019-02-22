@@ -1,7 +1,9 @@
 package com.Lands.webChat.model;
 
+import com.Lands.webChat.util.Util;
+import com.google.gson.Gson;
+
 import java.util.Date;
-import com.Lands.webChat.util.*;
 
 public class User {
     private String id;
@@ -10,12 +12,18 @@ public class User {
 
     private String password;
 
+    private Date lastLoginTime;
+
     private Integer status;
 
-    private Date lastLoginTime;
+    private Date createdDate;
+
+    private Date modifiedDate;
 
     public User(){
         id = Util.idGenerator();
+        createdDate = new Date();
+        modifiedDate = new Date();
     }
 
     public String getId() {
@@ -27,7 +35,15 @@ public class User {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name == null ? null : name.trim();
+    }
+
+    public Date getLastLoginTime() {
+        return lastLoginTime;
+    }
+
+    public void setLastLoginTime(Date lastLoginTime) {
+        this.lastLoginTime = lastLoginTime;
     }
 
     public Integer getStatus() {
@@ -38,11 +54,25 @@ public class User {
         this.status = status;
     }
 
-    public Date getLastLoginTime() {
-        return lastLoginTime;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setLastLoginTime(Date lastLoginTime) {
-        this.lastLoginTime = lastLoginTime;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Date getModifiedDate() {
+        return modifiedDate;
+    }
+
+    public void setModifiedDate(Date modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }
+
+    @Override
+    public String toString() {
+        Gson json = new Gson();
+        return json.toJson(this);
     }
 }
