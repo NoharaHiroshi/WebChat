@@ -32,11 +32,12 @@ public class Util {
 
     // 加密
     public static String aes(String data, int mode) {
-        String key = "ABCDEGHIJKLMNOPQ";
+        String key = "123456";
         try {
-            //0 加密内容 1 解密内容
+            //1 加密内容 2 解密内容
             byte[] content;
-            if (mode == 0) {
+            boolean encrypt = mode == Cipher.ENCRYPT_MODE;
+            if (encrypt) {
                 content = data.getBytes("UTF-8");
             } else {
                 content = parseHexStr2Byte(data);
@@ -55,9 +56,9 @@ public class Util {
             //6.根据指定算法AES自成密码器
             Cipher cipher = Cipher.getInstance("AES");
             //7.初始化密码器，第一个参数为加密(Encrypt_mode)或者解密解密(Decrypt_mode)操作，第二个参数为使用的KEY
-            cipher.init(Cipher.ENCRYPT_MODE, keySpec);
+            cipher.init(mode, keySpec);
             byte[] result = cipher.doFinal(content);//加密或解密
-            if (mode == 0) {
+            if (encrypt) {
                 //将二进制转换成16进制
                 LOG.info("加密结果： " + parseByte2HexStr(result));
                 return parseByte2HexStr(result);
