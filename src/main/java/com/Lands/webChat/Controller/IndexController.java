@@ -4,6 +4,8 @@ import com.Lands.webChat.Service.UserService;
 import com.Lands.webChat.model.User;
 import java.lang.reflect.Type;
 
+import com.Lands.webChat.util.ServiceResult;
+import com.Lands.webChat.util.Util;
 import com.Lands.webChat.webSocket.WebSocket;
 import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
@@ -25,10 +27,20 @@ public class IndexController {
     private UserService userService;
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String register(@RequestBody User user) {
+    public ServiceResult register(@RequestBody User user) {
         LOG.info(user.toString());
-        int result = userService.addUser(user);
-        LOG.info(String.valueOf(result));
-        return "success";
+        int serviceRes = userService.addUser(user);
+        try {
+            if(serviceRes == 0) {
+                ServiceResult result = ServiceResult.success("");
+                return result;
+            }else {
+                ServiceResult result = ServiceResult.failure(-1, "创建失败");
+                return result;
+            }
+        } catch (Exception e) {
+            ServiceResult result = ServiceResult.failure(-99, "发送错误");
+            return result;
+        }
     }
 }

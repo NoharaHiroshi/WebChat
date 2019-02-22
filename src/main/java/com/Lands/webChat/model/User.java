@@ -21,9 +21,13 @@ public class User {
     private Date modifiedDate;
 
     public User(){
-        id = Util.idGenerator();
-        createdDate = new Date();
-        modifiedDate = new Date();
+        this.id = Util.idGenerator();
+        this.createdDate = new Date();
+        this.modifiedDate = new Date();
+    }
+
+    public void setPassword(String password) {
+        this.password = Util.aes(password, 0);
     }
 
     public String getId() {
