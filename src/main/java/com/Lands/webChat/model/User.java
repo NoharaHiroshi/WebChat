@@ -1,5 +1,6 @@
 package com.Lands.webChat.model;
 
+import com.Lands.webChat.util.CipherUtil;
 import com.Lands.webChat.util.Util;
 import com.google.gson.Gson;
 
@@ -27,7 +28,7 @@ public class User {
     }
 
     public void setPassword(String password) {
-        this.password = Util.aes(password, 0);
+        this.password = CipherUtil.encrypt(password);
     }
 
     public String getId() {
