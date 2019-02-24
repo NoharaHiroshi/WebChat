@@ -2,12 +2,8 @@ package com.Lands.webChat.Controller;
 
 import com.Lands.webChat.Service.UserService;
 import com.Lands.webChat.model.User;
-import java.lang.reflect.Type;
 
 import com.Lands.webChat.util.ServiceResult;
-import com.Lands.webChat.util.Util;
-import com.Lands.webChat.webSocket.WebSocket;
-import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import com.google.gson.*;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -29,7 +24,8 @@ public class IndexController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ServiceResult register(@RequestBody User user) {
         LOG.info(user.toString());
-        int serviceRes = userService.addUser(user);
+        User userObj = User.userFactory(user);
+        int serviceRes = userService.addUser(userObj);
         try {
             if(serviceRes == 1) {
                 ServiceResult result = ServiceResult.success("");
@@ -47,11 +43,33 @@ public class IndexController {
     // 接收参数的方式，如果是String params
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ServiceResult login(@RequestBody Map<String, Object> params) {
-        System.out.println(params);
-        String name = params.get("name").toString();
-        String password = params.get("password").toString();
-        User user = userService.searchUser(name);
-        System.out.println(user);
-        return null;
+        LOG.info(params.toString());
+        try {
+            String name = params.get("name").toString();
+            String password = params.get("password").toString();
+            if (name.equals("") || password.equals("")) {
+                ServiceResult result = ServiceResult.failure(-1, "用户名或密码未填写");
+                return result;
+            } else {
+                // 创建了user对象时，默认调用了setPassword，所以又加了一次密
+                User user = userService.searchUser(name);
+                if (user == null){
+                    ServiceResult result = ServiceResult.failure(-2, "当前用户不存在");
+                    return result;
+                } else {
+                    if(user.authPassword(password)){
+                        ServiceResult result = ServiceResult.success("登录成功");
+                        return result;
+                    }else {
+                        ServiceResult result = ServiceResult.failure(-3, "用户密码错误");
+                        return result;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LOG.warn(e.getMessage());
+            ServiceResult result = ServiceResult.failure(-99, "发生错误");
+            return result;
+        }
     }
 }

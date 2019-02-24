@@ -4,6 +4,7 @@ import com.Lands.webChat.util.CipherUtil;
 import com.Lands.webChat.util.Util;
 import com.google.gson.Gson;
 
+import javax.management.DynamicMBean;
 import java.util.Date;
 
 public class User {
@@ -21,20 +22,29 @@ public class User {
 
     private Date modifiedDate;
 
-    public User(){
-        this.id = Util.idGenerator();
-        this.createdDate = new Date();
-        this.modifiedDate = new Date();
+    public User(){}
+
+    public static User userFactory(User user) {
+        user.id = Util.idGenerator();
+        user.createdDate = new Date();
+        user.modifiedDate = new Date();
+        user.password = CipherUtil.encrypt(user.password);
+        return user;
     }
 
     // jsonToUser时默认调用setter方法
+    // 从数据库中读出数据，构建user对象会调用User()方法
+    // 从数据库中读出的值，要赋值给User的属性默认会作为参数调用setter方法
     public void setPassword(String password) {
-        this.password = CipherUtil.encrypt(password);
+        this.password = password;
     }
 
     public boolean authPassword(String password) {
         try {
-            return CipherUtil.encrypt(password).equals(this.password);
+            // this.password = password 调用了setPassword的方法？是的，即使没有显示声明setter，也是默认通过setter方式赋值的
+            String deStr = CipherUtil.decrypt(this.password);
+            boolean result = deStr.equals(password);
+            return result;
         } catch (Exception e) {
             return false;
         }

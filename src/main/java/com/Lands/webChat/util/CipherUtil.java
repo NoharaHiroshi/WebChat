@@ -77,7 +77,7 @@ public class CipherUtil {
     }
 
     public static void main(String[] args) {
-        String info = CipherUtil.encrypt("hello");
+        String info = CipherUtil.encrypt("123456");
         System.out.println(info);
         String raw = CipherUtil.decrypt(info);
         System.out.println(raw);
