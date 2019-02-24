@@ -31,7 +31,7 @@ public class IndexController {
         LOG.info(user.toString());
         int serviceRes = userService.addUser(user);
         try {
-            if(serviceRes == 0) {
+            if(serviceRes == 1) {
                 ServiceResult result = ServiceResult.success("");
                 return result;
             }else {
@@ -42,5 +42,16 @@ public class IndexController {
             ServiceResult result = ServiceResult.failure(-99, "发送错误");
             return result;
         }
+    }
+
+    // 接收参数的方式，如果是String params
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ServiceResult login(@RequestBody Map<String, Object> params) {
+        System.out.println(params);
+        String name = params.get("name").toString();
+        String password = params.get("password").toString();
+        User user = userService.searchUser(name);
+        System.out.println(user);
+        return null;
     }
 }

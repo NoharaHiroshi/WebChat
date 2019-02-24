@@ -27,8 +27,17 @@ public class User {
         this.modifiedDate = new Date();
     }
 
+    // jsonToUser时默认调用setter方法
     public void setPassword(String password) {
         this.password = CipherUtil.encrypt(password);
+    }
+
+    public boolean authPassword(String password) {
+        try {
+            return CipherUtil.encrypt(password).equals(this.password);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public String getId() {

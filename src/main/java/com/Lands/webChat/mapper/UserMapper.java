@@ -40,6 +40,21 @@ public interface UserMapper {
     })
     User selectByPrimaryKey(String id);
 
+    @Select({
+            "select",
+            "id, name, password, last_login_time, status",
+            "from user",
+            "where name = #{name,jdbcType=VARCHAR}"
+    })
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
+            @Result(column="password", property="password", jdbcType=JdbcType.VARCHAR),
+            @Result(column="last_login_time", property="lastLoginTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="status", property="status", jdbcType=JdbcType.INTEGER)
+    })
+    User selectByName(String name);
+
     @UpdateProvider(type=UserSqlProvider.class, method="updateByPrimaryKeySelective")
     int updateByPrimaryKeySelective(User record);
 
