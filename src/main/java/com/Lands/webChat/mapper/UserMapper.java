@@ -60,6 +60,23 @@ public interface UserMapper {
     })
     User selectByName(String name);
 
+    @Select({
+            "select",
+            "created_date, modified_date, id, name, password, last_login_time, status",
+            "from user",
+            "where status = 1"
+    })
+    @Results({
+            @Result(column="created_date", property="createdDate", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="modified_date", property="modifiedDate", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
+            @Result(column="password", property="password", jdbcType=JdbcType.VARCHAR),
+            @Result(column="last_login_time", property="lastLoginTime", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="status", property="status", jdbcType=JdbcType.INTEGER)
+    })
+    User[] selectAllOnlineUser();
+
     @UpdateProvider(type=UserSqlProvider.class, method="updateByPrimaryKeySelective")
     int updateByPrimaryKeySelective(User record);
 

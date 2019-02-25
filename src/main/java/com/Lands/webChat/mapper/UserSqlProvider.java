@@ -24,6 +24,14 @@ public class UserSqlProvider {
             VALUES("name", "#{name,jdbcType=VARCHAR}");
         }
         
+        if (record.getCreatedDate() != null) {
+            VALUES("created_date", "#{createdDate,jdbcType=TIMESTAMP}");
+        }
+        
+        if (record.getModifiedDate() != null) {
+            VALUES("modified_date", "#{modifiedDate,jdbcType=TIMESTAMP}");
+        }
+        
         if (record.getLastLoginTime() != null) {
             VALUES("last_login_time", "#{lastLoginTime,jdbcType=TIMESTAMP}");
         }
@@ -39,8 +47,12 @@ public class UserSqlProvider {
         BEGIN();
         UPDATE("user");
         
-        if (record.getName() != null) {
-            SET("name = #{name,jdbcType=VARCHAR}");
+        if (record.getCreatedDate() != null) {
+            SET("created_date = #{createdDate,jdbcType=TIMESTAMP}");
+        }
+        
+        if (record.getModifiedDate() != null) {
+            SET("modified_date = #{modifiedDate,jdbcType=TIMESTAMP}");
         }
         
         if (record.getLastLoginTime() != null) {
@@ -52,6 +64,7 @@ public class UserSqlProvider {
         }
         
         WHERE("id = #{id,jdbcType=VARCHAR}");
+        WHERE("name = #{name,jdbcType=VARCHAR}");
         
         return SQL();
     }

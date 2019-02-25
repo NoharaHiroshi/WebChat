@@ -33,10 +33,30 @@
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
 
+        <!--<table-->
+                <!--schema="web_chat"-->
+                <!--tableName="user"-->
+                <!--domainObjectName="User"-->
+                <!--enableCountByExample="false"-->
+                <!--enableUpdateByExample="false"-->
+                <!--enableDeleteByExample="false"-->
+                <!--enableSelectByExample="false"-->
+                <!--selectByExampleQueryId="false"-->
+        <!--&gt;</table>-->
         <table
                 schema="web_chat"
-                tableName="user"
-                domainObjectName="User"
+                tableName="session"
+                domainObjectName="Session"
+                enableCountByExample="false"
+                enableUpdateByExample="false"
+                enableDeleteByExample="false"
+                enableSelectByExample="false"
+                selectByExampleQueryId="false"
+        ></table>
+        <table
+                schema="web_chat"
+                tableName="home"
+                domainObjectName="Home"
                 enableCountByExample="false"
                 enableUpdateByExample="false"
                 enableDeleteByExample="false"

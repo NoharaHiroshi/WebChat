@@ -34,4 +34,24 @@ public class UserService {
             return null;
         }
     }
+
+    public User getUser(String id) {
+        try {
+            User user = userMapper.selectByPrimaryKey(id);
+            return user;
+        } catch (Exception e){
+            LOG.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public User[] getOnlineUser() {
+        try {
+            User[] userList = userMapper.selectAllOnlineUser();
+            return userList;
+        }catch (Exception e){
+            LOG.error(e.getMessage());
+            return null;
+        }
+    }
 }

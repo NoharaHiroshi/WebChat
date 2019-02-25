@@ -1,6 +1,6 @@
 package com.Lands.webChat.webSocket;
 
-import com.Lands.webChat.util.Message;
+import com.Lands.webChat.model.Message;
 import com.google.gson.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
