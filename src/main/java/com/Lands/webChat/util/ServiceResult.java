@@ -31,6 +31,14 @@ public class ServiceResult<T> implements Serializable {
         return result;
     }
 
+    public static <T> ServiceResult<T> success(T data, String msg) {
+        ServiceResult<T> result = new ServiceResult<>();
+        result.code = 0;
+        result.msg = msg;
+        result.data = data;
+        return result;
+    }
+
     public static <T> ServiceResult<T> failure(int code, String msg) {
         ServiceResult<T> result = new ServiceResult<>();
         result.code = code;

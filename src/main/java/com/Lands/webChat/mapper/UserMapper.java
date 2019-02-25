@@ -13,10 +13,11 @@ public interface UserMapper {
     int deleteByPrimaryKey(String id);
 
     @Insert({
-        "insert into user (id, name, ",
+        "insert into user (created_date, modified_date, id, name, ",
         "password, last_login_time, ",
         "status)",
-        "values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, ",
+        "values (#{createdDate,jdbcType=TIMESTAMP}, #{modifiedDate,jdbcType=TIMESTAMP},",
+                "#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, ",
         "#{password,jdbcType=VARCHAR}, #{lastLoginTime,jdbcType=TIMESTAMP}, ",
         "#{status,jdbcType=INTEGER})"
     })
@@ -27,11 +28,13 @@ public interface UserMapper {
 
     @Select({
         "select",
-        "id, name, password, last_login_time, status",
+        "created_date, modified_date, id, name, password, last_login_time, status",
         "from user",
         "where id = #{id,jdbcType=VARCHAR}"
     })
     @Results({
+        @Result(column="created_date", property="createdDate", jdbcType=JdbcType.TIMESTAMP),
+        @Result(column="modified_date", property="modifiedDate", jdbcType=JdbcType.TIMESTAMP),
         @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
         @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
         @Result(column="password", property="password", jdbcType=JdbcType.VARCHAR),
@@ -42,11 +45,13 @@ public interface UserMapper {
 
     @Select({
             "select",
-            "id, name, password, last_login_time, status",
+            "created_date, modified_date, id, name, password, last_login_time, status",
             "from user",
             "where name = #{name,jdbcType=VARCHAR}"
     })
     @Results({
+            @Result(column="created_date", property="createdDate", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="modified_date", property="modifiedDate", jdbcType=JdbcType.TIMESTAMP),
             @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
             @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
             @Result(column="password", property="password", jdbcType=JdbcType.VARCHAR),
@@ -61,6 +66,8 @@ public interface UserMapper {
     @Update({
         "update user",
         "set name = #{name,jdbcType=VARCHAR},",
+          "created_date = #{createdDate,jdbcType=TIMESTAMP},",
+          "modified_date = #{modifiedDate,jdbcType=TIMESTAMP},",
           "password = #{password,jdbcType=VARCHAR},",
           "last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},",
           "status = #{status,jdbcType=INTEGER}",

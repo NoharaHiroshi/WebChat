@@ -25,10 +25,11 @@ public class IndexController {
     public ServiceResult register(@RequestBody User user) {
         LOG.info(user.toString());
         User userObj = User.userFactory(user);
+        LOG.info(user.toString());
         int serviceRes = userService.addUser(userObj);
         try {
             if(serviceRes == 1) {
-                ServiceResult result = ServiceResult.success("");
+                ServiceResult result = ServiceResult.success("新建用户成功");
                 return result;
             }else {
                 ServiceResult result = ServiceResult.failure(-1, "创建失败");
@@ -58,7 +59,7 @@ public class IndexController {
                     return result;
                 } else {
                     if(user.authPassword(password)){
-                        ServiceResult result = ServiceResult.success("登录成功");
+                        ServiceResult result = ServiceResult.success(User.getUser(user), "登录成功");
                         return result;
                     }else {
                         ServiceResult result = ServiceResult.failure(-3, "用户密码错误");

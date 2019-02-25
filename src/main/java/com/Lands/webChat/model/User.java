@@ -4,7 +4,6 @@ import com.Lands.webChat.util.CipherUtil;
 import com.Lands.webChat.util.Util;
 import com.google.gson.Gson;
 
-import javax.management.DynamicMBean;
 import java.util.Date;
 
 public class User {
@@ -22,8 +21,11 @@ public class User {
 
     private Date modifiedDate;
 
-    public User(){}
+    public User(){
+        System.out.println("调用了User()方法" );
+    }
 
+    // 初始化User
     public static User userFactory(User user) {
         user.id = Util.idGenerator();
         user.createdDate = new Date();
@@ -32,10 +34,17 @@ public class User {
         return user;
     }
 
+    // 返回User数据，一般是不需要的直接返回对象就行，User需要将password隐藏
+    public static User getUser(User user) {
+        user.setPassword("");
+        return user;
+    }
+
     // jsonToUser时默认调用setter方法
     // 从数据库中读出数据，构建user对象会调用User()方法
     // 从数据库中读出的值，要赋值给User的属性默认会作为参数调用setter方法
     public void setPassword(String password) {
+        System.out.println("调用了setPassword方法");
         this.password = password;
     }
 
@@ -83,6 +92,7 @@ public class User {
     }
 
     public void setCreatedDate(Date createdDate) {
+        System.out.println("调用了setCreatedDate方法" );
         this.createdDate = createdDate;
     }
 
@@ -91,6 +101,7 @@ public class User {
     }
 
     public void setModifiedDate(Date modifiedDate) {
+        System.out.println("调用了setModifiedDate方法" );
         this.modifiedDate = modifiedDate;
     }
 
