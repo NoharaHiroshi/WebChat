@@ -1,5 +1,8 @@
 package com.Lands.webChat.model;
 
+import com.google.gson.Gson;
+import com.Lands.webChat.util.Util;
+
 import java.util.Date;
 
 public class Session {
@@ -9,13 +12,22 @@ public class Session {
 
     private Date modifiedDate;
 
-    private String userid;
+    private String userId;
 
-    private String username;
+    private String userName;
 
-    private String homeid;
+    private String homeId;
 
     private String content;
+
+    public Session() {}
+
+    public static Session sessionFactory(Session session) {
+        session.id = Util.idGenerator();
+        session.createdDate = new Date();
+        session.modifiedDate = new Date();
+        return session;
+    }
 
     public String getId() {
         return id;
@@ -41,28 +53,28 @@ public class Session {
         this.modifiedDate = modifiedDate;
     }
 
-    public String getUserid() {
-        return userid;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUserid(String userid) {
-        this.userid = userid == null ? null : userid.trim();
+    public void setUserId(String userId) {
+        this.userId = userId == null ? null : userId.trim();
     }
 
-    public String getUsername() {
-        return username;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUsername(String username) {
-        this.username = username == null ? null : username.trim();
+    public void setUserName(String userName) {
+        this.userName = userName == null ? null : userName.trim();
     }
 
-    public String getHomeid() {
-        return homeid;
+    public String getHomeId() {
+        return homeId;
     }
 
-    public void setHomeid(String homeid) {
-        this.homeid = homeid == null ? null : homeid.trim();
+    public void setHomeId(String homeId) {
+        this.homeId = homeId == null ? null : homeId.trim();
     }
 
     public String getContent() {
@@ -71,5 +83,11 @@ public class Session {
 
     public void setContent(String content) {
         this.content = content == null ? null : content.trim();
+    }
+
+    @Override
+    public String toString() {
+        Gson json = new Gson();
+        return json.toJson(this);
     }
 }

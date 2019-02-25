@@ -28,16 +28,16 @@ public class SessionSqlProvider {
             VALUES("modified_date", "#{modifiedDate,jdbcType=TIMESTAMP}");
         }
         
-        if (record.getUserid() != null) {
-            VALUES("userId", "#{userid,jdbcType=VARCHAR}");
+        if (record.getUserId() != null) {
+            VALUES("user_id", "#{userId,jdbcType=VARCHAR}");
         }
         
-        if (record.getUsername() != null) {
-            VALUES("userName", "#{username,jdbcType=VARCHAR}");
+        if (record.getUserName() != null) {
+            VALUES("user_name", "#{userName,jdbcType=VARCHAR}");
         }
         
-        if (record.getHomeid() != null) {
-            VALUES("homeId", "#{homeid,jdbcType=VARCHAR}");
+        if (record.getHomeId() != null) {
+            VALUES("home_id", "#{homeId,jdbcType=VARCHAR}");
         }
         
         if (record.getContent() != null) {
@@ -59,16 +59,16 @@ public class SessionSqlProvider {
             SET("modified_date = #{modifiedDate,jdbcType=TIMESTAMP}");
         }
         
-        if (record.getUserid() != null) {
-            SET("userId = #{userid,jdbcType=VARCHAR}");
+        if (record.getUserId() != null) {
+            SET("user_id = #{userId,jdbcType=VARCHAR}");
         }
         
-        if (record.getUsername() != null) {
-            SET("userName = #{username,jdbcType=VARCHAR}");
+        if (record.getUserName() != null) {
+            SET("user_name = #{userName,jdbcType=VARCHAR}");
         }
         
-        if (record.getHomeid() != null) {
-            SET("homeId = #{homeid,jdbcType=VARCHAR}");
+        if (record.getHomeId() != null) {
+            SET("home_id = #{homeId,jdbcType=VARCHAR}");
         }
         
         if (record.getContent() != null) {

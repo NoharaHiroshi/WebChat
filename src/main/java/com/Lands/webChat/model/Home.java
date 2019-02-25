@@ -1,5 +1,7 @@
 package com.Lands.webChat.model;
 
+import com.Lands.webChat.util.Util;
+
 import java.util.Date;
 
 public class Home {
@@ -8,6 +10,15 @@ public class Home {
     private Date createdDate;
 
     private Date modifiedDate;
+
+    public Home() {}
+
+    public static Home homeFactory(Home home){
+        home.id = Util.idGenerator();
+        home.createdDate = new Date();
+        home.modifiedDate = new Date();
+        return home;
+    }
 
     public String getId() {
         return id;

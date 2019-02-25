@@ -21,9 +21,7 @@ public class User {
 
     private Date modifiedDate;
 
-    public User(){
-        System.out.println("调用了User()方法" );
-    }
+    public User(){ }
 
     // 初始化User
     public static User userFactory(User user) {
@@ -44,7 +42,6 @@ public class User {
     // 从数据库中读出数据，构建user对象会调用User()方法
     // 从数据库中读出的值，要赋值给User的属性默认会作为参数调用setter方法
     public void setPassword(String password) {
-        System.out.println("调用了setPassword方法");
         this.password = password;
     }
 
@@ -92,7 +89,6 @@ public class User {
     }
 
     public void setCreatedDate(Date createdDate) {
-        System.out.println("调用了setCreatedDate方法" );
         this.createdDate = createdDate;
     }
 
@@ -101,7 +97,6 @@ public class User {
     }
 
     public void setModifiedDate(Date modifiedDate) {
-        System.out.println("调用了setModifiedDate方法" );
         this.modifiedDate = modifiedDate;
     }
 
