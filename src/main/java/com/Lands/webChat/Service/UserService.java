@@ -54,4 +54,14 @@ public class UserService {
             return null;
         }
     }
+
+    public int updateUser(User user) {
+        try {
+            int result = userMapper.updateByPrimaryKey(user);
+            return result;
+        }catch (Exception e){
+            LOG.error(e.getMessage());
+            return -1;
+        }
+    }
 }

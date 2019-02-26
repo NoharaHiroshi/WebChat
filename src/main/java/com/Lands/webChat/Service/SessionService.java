@@ -46,7 +46,7 @@ public class SessionService {
 
     public boolean isInHome(String homeId, String userId) {
         try {
-            Session[] sessionList = sessionMapper.selectByHomeId(homeId, userId);
+            Session[] sessionList = sessionMapper.selectByHomeUserId(homeId, userId);
             if(sessionList.length != 0) {
                 return true;
             }else {
@@ -58,9 +58,19 @@ public class SessionService {
         }
     }
 
-    public Session[] getSessionByHomeId(String homeId, String userId) {
+    public Session[] getSessionByHomeId(String homeId) {
         try {
-            Session[] sessionList = sessionMapper.selectByHomeId(homeId, userId);
+            Session[] sessionList = sessionMapper.selectByHomeId(homeId);
+            return sessionList;
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public Session[] getSessionByUserId(String userId) {
+        try {
+            Session[] sessionList = sessionMapper.selectByHomeId(userId);
             return sessionList;
         } catch (Exception e) {
             LOG.error(e.getMessage());

@@ -51,14 +51,12 @@ public class WebSocket {
     // 用户ID
     private String userId;
 
-    public WebSocket() {
-        LOG.info("WebSocket导入进来了");
-    }
+    private User user;
 
     private static UserService userService;
 
     @Autowired
-    public void setChatService(UserService userService) {
+    public void setUserService(UserService userService) {
         WebSocket.userService = userService;
     }
 
@@ -66,8 +64,8 @@ public class WebSocket {
     private Integer OnlineAddCount() {
         connectCount++;
         LOG.info("用户上线， 当前用户：" + connectCount);
-        User user = userService.getUser(userId);
-        user.setStatus(1);
+        this.user.setStatus(1);
+        userService.updateUser(this.user);
         return connectCount;
     }
 
@@ -75,8 +73,8 @@ public class WebSocket {
     private Integer OnlineSubCount() {
         connectCount--;
         LOG.info("用户下线， 当前用户：" + connectCount);
-        User user = userService.getUser(userId);
-        user.setStatus(0);
+        this.user.setStatus(0);
+        userService.updateUser(this.user);
         return connectCount;
     }
 
@@ -85,9 +83,10 @@ public class WebSocket {
      */
     @OnOpen
     public void onOpen(Session session, @PathParam("userId") String userId) {
-        LOG.info("用户【" + userId + "】登录");
         this.session = session;
         this.userId = userId;
+        this.user = userService.getUser(userId);
+        LOG.info("用户【" + this.user.getName() + "】登录");
         OnlineAddCount();
         webSocketSet.add(this);
         try {
@@ -102,7 +101,7 @@ public class WebSocket {
      */
     @OnClose
     public void onClose(@PathParam("userId") String userId) {
-        LOG.info("用户【" + userId + "】退出");
+        LOG.info("用户【" + this.user.getName() + "】退出");
         OnlineSubCount();
         webSocketSet.remove(this);
     }
@@ -121,7 +120,7 @@ public class WebSocket {
     public Message messageHandler(String message) {
         Gson json = new Gson();
         Message msg = json.fromJson(message, Message.class);
-        LOG.info("用户【" + userId + "】发送信息： " + msg.toString());
+        LOG.info("用户【" + this.user.getName() + "】发送信息： " + msg.toString());
         return msg;
     }
 

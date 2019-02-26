@@ -9,10 +9,7 @@ import com.Lands.webChat.model.User;
 import com.Lands.webChat.util.ServiceResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -41,6 +38,20 @@ public class ChatController {
         try {
             User[] userList = userService.getOnlineUser();
             ServiceResult result = ServiceResult.success(userList, "获取用户列表成功");
+            return result;
+        } catch (Exception e) {
+            ServiceResult result = ServiceResult.failure(-99, "发送错误");
+            return result;
+        }
+    }
+
+    @RequestMapping(value = "/getHistoryHomeId", method = RequestMethod.GET)
+    public ServiceResult getHistoryHomeId(
+            @RequestParam(value = "userId") String userId
+    ) {
+        try {
+            Session[] sessionList = sessionService.getSessionByUserId(userId);
+            ServiceResult result = ServiceResult.success(sessionList, "获取用户会话编号成功");
             return result;
         } catch (Exception e) {
             ServiceResult result = ServiceResult.failure(-99, "发送错误");

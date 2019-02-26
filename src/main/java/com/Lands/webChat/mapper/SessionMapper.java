@@ -46,14 +46,37 @@ public interface SessionMapper {
 
     @Select({
             "select",
-            "home_id",
+            "id, created_date, modified_date, user_id, user_name, home_id, content",
             "from session",
             "where user_id = #{userId,jdbcType=VARCHAR}"
     })
     @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="created_date", property="createdDate", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="modified_date", property="modifiedDate", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="user_id", property="userId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="user_name", property="userName", jdbcType=JdbcType.VARCHAR),
             @Result(column="home_id", property="homeId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="content", property="content", jdbcType=JdbcType.LONGVARCHAR)
     })
     Session[] selectByUserId(String userId);
+
+    @Select({
+            "select",
+            "id, created_date, modified_date, user_id, user_name, home_id, content",
+            "from session",
+            "where home_id = #{homeId,jdbcType=VARCHAR}"
+    })
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.VARCHAR, id=true),
+            @Result(column="created_date", property="createdDate", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="modified_date", property="modifiedDate", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="user_id", property="userId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="user_name", property="userName", jdbcType=JdbcType.VARCHAR),
+            @Result(column="home_id", property="homeId", jdbcType=JdbcType.VARCHAR),
+            @Result(column="content", property="content", jdbcType=JdbcType.LONGVARCHAR)
+    })
+    Session[] selectByHomeId(String homeId);
 
     @Select({
             "select",
@@ -70,7 +93,7 @@ public interface SessionMapper {
             @Result(column="home_id", property="homeId", jdbcType=JdbcType.VARCHAR),
             @Result(column="content", property="content", jdbcType=JdbcType.LONGVARCHAR)
     })
-    Session[] selectByHomeId(String homeId, String userId);
+    Session[] selectByHomeUserId(String homeId, String userId);
 
     @UpdateProvider(type=SessionSqlProvider.class, method="updateByPrimaryKeySelective")
     int updateByPrimaryKeySelective(Session record);
