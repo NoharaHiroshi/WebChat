@@ -21,6 +21,10 @@ public class IndexController {
     @Resource
     private UserService userService;
 
+    public IndexController() {
+        LOG.info("IndexController导入进来了");
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ServiceResult register(@RequestBody User user) {
         LOG.info(user.toString());

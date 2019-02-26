@@ -1,11 +1,24 @@
 package com.Lands.webChat.webSocket;
 
+import com.Lands.webChat.Service.UserService;
 import com.Lands.webChat.model.Message;
+import com.Lands.webChat.model.User;
 import com.google.gson.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import javax.annotation.Resource;
 import javax.websocket.Session;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
@@ -38,10 +51,23 @@ public class WebSocket {
     // 用户ID
     private String userId;
 
+    public WebSocket() {
+        LOG.info("WebSocket导入进来了");
+    }
+
+    private static UserService userService;
+
+    @Autowired
+    public void setChatService(UserService userService) {
+        WebSocket.userService = userService;
+    }
+
     // 上线
     private Integer OnlineAddCount() {
         connectCount++;
         LOG.info("用户上线， 当前用户：" + connectCount);
+        User user = userService.getUser(userId);
+        user.setStatus(1);
         return connectCount;
     }
 
@@ -49,6 +75,8 @@ public class WebSocket {
     private Integer OnlineSubCount() {
         connectCount--;
         LOG.info("用户下线， 当前用户：" + connectCount);
+        User user = userService.getUser(userId);
+        user.setStatus(0);
         return connectCount;
     }
 
