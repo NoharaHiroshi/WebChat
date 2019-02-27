@@ -5,7 +5,7 @@ import com.Lands.webChat.util.Util;
 
 import java.util.Date;
 
-public class Session {
+public class MsgSession {
     private String id;
 
     private Date createdDate;
@@ -20,9 +20,9 @@ public class Session {
 
     private String content;
 
-    public Session() {}
+    public MsgSession() {}
 
-    public static Session sessionFactory(Session session) {
+    public static MsgSession sessionFactory(MsgSession session) {
         session.id = Util.idGenerator();
         session.createdDate = new Date();
         session.modifiedDate = new Date();

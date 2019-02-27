@@ -1,7 +1,9 @@
 package com.Lands.webChat.webSocket;
 
+import com.Lands.webChat.Service.SessionService;
 import com.Lands.webChat.Service.UserService;
 import com.Lands.webChat.model.Message;
+import com.Lands.webChat.model.MsgSession;
 import com.Lands.webChat.model.User;
 import com.google.gson.*;
 import org.slf4j.Logger;
@@ -55,10 +57,15 @@ public class WebSocket {
 
     private static UserService userService;
 
+    private static SessionService sessionService;
+
     @Autowired
     public void setUserService(UserService userService) {
         WebSocket.userService = userService;
     }
+
+    @Autowired
+    public void setSessionService(SessionService sessionService) {WebSocket.sessionService = sessionService; }
 
     // 上线
     private Integer OnlineAddCount() {
@@ -124,7 +131,7 @@ public class WebSocket {
         return msg;
     }
 
-    /** 发送信息
+    /** 服务器发送信息
      *
      * @param message
      * @throws IOException

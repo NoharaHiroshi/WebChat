@@ -1,6 +1,6 @@
 package com.Lands.webChat.mapper;
 
-import com.Lands.webChat.model.Session;
+import com.Lands.webChat.model.MsgSession;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
 
@@ -22,11 +22,12 @@ public interface SessionMapper {
         "#{userName,jdbcType=VARCHAR}, #{homeId,jdbcType=VARCHAR}, ",
         "#{content,jdbcType=LONGVARCHAR})"
     })
-    int insert(Session record);
+    int insert(MsgSession record);
 
     @InsertProvider(type=SessionSqlProvider.class, method="insertSelective")
-    int insertSelective(Session record);
+    int insertSelective(MsgSession record);
 
+    // 主键搜索
     @Select({
         "select",
         "id, created_date, modified_date, user_id, user_name, home_id, content",
@@ -42,7 +43,7 @@ public interface SessionMapper {
         @Result(column="home_id", property="homeId", jdbcType=JdbcType.VARCHAR),
         @Result(column="content", property="content", jdbcType=JdbcType.LONGVARCHAR)
     })
-    Session selectByPrimaryKey(String id);
+    MsgSession selectByPrimaryKey(String id);
 
     @Select({
             "select",
@@ -59,7 +60,7 @@ public interface SessionMapper {
             @Result(column="home_id", property="homeId", jdbcType=JdbcType.VARCHAR),
             @Result(column="content", property="content", jdbcType=JdbcType.LONGVARCHAR)
     })
-    Session[] selectByUserId(String userId);
+    MsgSession[] selectByUserId(String userId);
 
     @Select({
             "select",
@@ -76,7 +77,7 @@ public interface SessionMapper {
             @Result(column="home_id", property="homeId", jdbcType=JdbcType.VARCHAR),
             @Result(column="content", property="content", jdbcType=JdbcType.LONGVARCHAR)
     })
-    Session[] selectByHomeId(String homeId);
+    MsgSession[] selectByHomeId(String homeId);
 
     @Select({
             "select",
@@ -93,10 +94,10 @@ public interface SessionMapper {
             @Result(column="home_id", property="homeId", jdbcType=JdbcType.VARCHAR),
             @Result(column="content", property="content", jdbcType=JdbcType.LONGVARCHAR)
     })
-    Session[] selectByHomeUserId(String homeId, String userId);
+    MsgSession[] selectByHomeUserId(String homeId, String userId);
 
     @UpdateProvider(type=SessionSqlProvider.class, method="updateByPrimaryKeySelective")
-    int updateByPrimaryKeySelective(Session record);
+    int updateByPrimaryKeySelective(MsgSession record);
 
     @Update({
         "update session",
@@ -108,7 +109,7 @@ public interface SessionMapper {
           "content = #{content,jdbcType=LONGVARCHAR}",
         "where id = #{id,jdbcType=VARCHAR}"
     })
-    int updateByPrimaryKeyWithBLOBs(Session record);
+    int updateByPrimaryKeyWithBLOBs(MsgSession record);
 
     @Update({
         "update session",
@@ -119,5 +120,5 @@ public interface SessionMapper {
           "home_id = #{homeId,jdbcType=VARCHAR}",
         "where id = #{id,jdbcType=VARCHAR}"
     })
-    int updateByPrimaryKey(Session record);
+    int updateByPrimaryKey(MsgSession record);
 }

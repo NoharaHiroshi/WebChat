@@ -1,7 +1,7 @@
 package com.Lands.webChat.Service;
 
 import com.Lands.webChat.mapper.SessionMapper;
-import com.Lands.webChat.model.Session;
+import com.Lands.webChat.model.MsgSession;
 import com.Lands.webChat.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,7 @@ public class SessionService {
     @Resource
     private SessionMapper sessionMapper;
 
-    public int addSession(Session session) {
+    public int addSession(MsgSession session) {
         try {
             return sessionMapper.insert(session);
         } catch (Exception e) {
@@ -30,23 +30,21 @@ public class SessionService {
         }
     }
 
-    public ArrayList<String> searchUserAllHome(String userId) {
+    // 搜索当前用户已创建房间号
+    public MsgSession[] getSessionByUserId(String userId) {
         try {
-            ArrayList<String> result = new ArrayList<>();
-            Session[] homeList = sessionMapper.selectByUserId(userId);
-            for(Session home: homeList){
-                result.add(home.getHomeId());
-            }
-            return result;
+            MsgSession[] sessionList = sessionMapper.selectByUserId(userId);
+            return sessionList;
         } catch (Exception e){
             LOG.error(e.getMessage());
             return null;
         }
     }
 
+    // 判断当前用户的房间号是否已创建过
     public boolean isInHome(String homeId, String userId) {
         try {
-            Session[] sessionList = sessionMapper.selectByHomeUserId(homeId, userId);
+            MsgSession[] sessionList = sessionMapper.selectByHomeUserId(homeId, userId);
             if(sessionList.length != 0) {
                 return true;
             }else {
@@ -58,19 +56,10 @@ public class SessionService {
         }
     }
 
-    public Session[] getSessionByHomeId(String homeId) {
+    // 获取当前房间号内的所有会话
+    public MsgSession[] getSessionByHomeId(String homeId) {
         try {
-            Session[] sessionList = sessionMapper.selectByHomeId(homeId);
-            return sessionList;
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-            return null;
-        }
-    }
-
-    public Session[] getSessionByUserId(String userId) {
-        try {
-            Session[] sessionList = sessionMapper.selectByHomeId(userId);
+            MsgSession[] sessionList = sessionMapper.selectByHomeId(homeId);
             return sessionList;
         } catch (Exception e) {
             LOG.error(e.getMessage());

@@ -8,11 +8,11 @@ import static org.apache.ibatis.jdbc.SqlBuilder.UPDATE;
 import static org.apache.ibatis.jdbc.SqlBuilder.VALUES;
 import static org.apache.ibatis.jdbc.SqlBuilder.WHERE;
 
-import com.Lands.webChat.model.Session;
+import com.Lands.webChat.model.MsgSession;
 
 public class SessionSqlProvider {
 
-    public String insertSelective(Session record) {
+    public String insertSelective(MsgSession record) {
         BEGIN();
         INSERT_INTO("session");
         
@@ -47,7 +47,7 @@ public class SessionSqlProvider {
         return SQL();
     }
 
-    public String updateByPrimaryKeySelective(Session record) {
+    public String updateByPrimaryKeySelective(MsgSession record) {
         BEGIN();
         UPDATE("session");
         

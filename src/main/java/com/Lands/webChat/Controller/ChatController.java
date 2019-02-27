@@ -4,7 +4,7 @@ import com.Lands.webChat.Service.HomeService;
 import com.Lands.webChat.Service.SessionService;
 import com.Lands.webChat.Service.UserService;
 import com.Lands.webChat.model.Home;
-import com.Lands.webChat.model.Session;
+import com.Lands.webChat.model.MsgSession;
 import com.Lands.webChat.model.User;
 import com.Lands.webChat.util.ServiceResult;
 import org.slf4j.Logger;
@@ -45,12 +45,15 @@ public class ChatController {
         }
     }
 
+    /**
+     * 获取当前用户的历史房间号
+     */
     @RequestMapping(value = "/getHistoryHomeId", method = RequestMethod.GET)
     public ServiceResult getHistoryHomeId(
             @RequestParam(value = "userId") String userId
     ) {
         try {
-            Session[] sessionList = sessionService.getSessionByUserId(userId);
+            MsgSession[] sessionList = sessionService.getSessionByUserId(userId);
             ServiceResult result = ServiceResult.success(sessionList, "获取用户会话编号成功");
             return result;
         } catch (Exception e) {
@@ -76,11 +79,12 @@ public class ChatController {
                 return result;
             }else {
                 // 查找当前用户房间号
-                ArrayList<String> homeIds = sessionService.searchUserAllHome(userId);
+                MsgSession[] sessionList = sessionService.getSessionByUserId(userId);
                 boolean isInHome = false;
                 String existHomeId = "";
                 // 遍历房间号和目标用户关系，如果没有，则表示之前没有创建房间，否则使用之前房间号
-                for(String homeId: homeIds) {
+                for(MsgSession session: sessionList) {
+                    String homeId = session.getHomeId();
                     if(sessionService.isInHome(homeId, oUserId)){
                         isInHome = true;
                         existHomeId = homeId;
@@ -94,26 +98,26 @@ public class ChatController {
                     homeService.addHome(homeObj);
                     String homeId = homeObj.getId();
 
-                    Session session = new Session();
+                    MsgSession session = new MsgSession();
                     session.setHomeId(homeId);
-                    Session sessionObj = Session.sessionFactory(session);
+                    MsgSession sessionObj = MsgSession.sessionFactory(session);
                     sessionObj.setUserId(userId);
                     sessionObj.setUserName(user.getName());
                     sessionService.addSession(sessionObj);
 
-                    Session sessionObj1 = Session.sessionFactory(session);
+                    MsgSession sessionObj1 = MsgSession.sessionFactory(session);
                     sessionObj1.setUserId(oUserId);
                     sessionObj1.setUserName(oUser.getName());
                     sessionService.addSession(sessionObj1);
 
                     HashMap<String, Object> map = new HashMap<>();
                     map.put("homeId", homeId);
-                    return ServiceResult.success(map, "查询成功");
+                    return ServiceResult.success(map, "创建房间成功");
 
                 }else {
                     HashMap<String, Object> map = new HashMap<>();
                     map.put("homeId", existHomeId);
-                    return ServiceResult.success(map, "查询成功");
+                    return ServiceResult.success(map, "查询房间成功");
                 }
             }
         } catch (Exception e){
