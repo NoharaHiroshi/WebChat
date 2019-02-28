@@ -48,13 +48,33 @@ public class ChatController {
     /**
      * 获取当前用户的历史房间号
      */
-    @RequestMapping(value = "/getHistoryHomeId", method = RequestMethod.GET)
-    public ServiceResult getHistoryHomeId(
-            @RequestParam(value = "userId") String userId
+    @RequestMapping(value = "/getHistoryHome", method = RequestMethod.POST)
+    public ServiceResult getHistoryHome(
+            @RequestBody Map<String, String> params
     ) {
         try {
+            LOG.info(params.toString());
+            String userId = params.get("userId");
             MsgSession[] sessionList = sessionService.getSessionByUserId(userId);
-            ServiceResult result = ServiceResult.success(sessionList, "获取用户会话编号成功");
+            ArrayList<String> homeIds = new ArrayList<>();
+            for(MsgSession msgSession: sessionList){
+                homeIds.add(msgSession.getHomeId());
+            }
+            ArrayList<HashMap<String, Object>> homeList = new ArrayList<>();
+            for(String homeId: homeIds){
+                HashMap<String, Object> homeObj = new HashMap<>();
+                MsgSession[] msgSessionList = sessionService.getSessionByHomeId(homeId);
+                StringBuffer userName = new StringBuffer();
+                homeObj.put("homeId", homeId);
+                for(MsgSession session: msgSessionList){
+                    if(!session.getUserId().equals(userId)){
+                       userName.append(session.getUserName());
+                    }
+                }
+                homeObj.put("userName", userName.toString());
+                homeList.add(homeObj);
+            }
+            ServiceResult result = ServiceResult.success(homeList, "获取用户会话编号成功");
             return result;
         } catch (Exception e) {
             ServiceResult result = ServiceResult.failure(-99, "发送错误");
@@ -117,11 +137,13 @@ public class ChatController {
 
                 HashMap<String, Object> map = new HashMap<>();
                 map.put("homeId", homeId);
+                map.put("userName", oUser.getName());
                 return ServiceResult.success(map, "创建房间成功");
 
             }else {
                 HashMap<String, Object> map = new HashMap<>();
                 map.put("homeId", existHomeId);
+                map.put("userName", oUser.getName());
                 return ServiceResult.success(map, "查询房间成功");
             }
         } catch (Exception e){

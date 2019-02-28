@@ -68,7 +68,7 @@ public class IndexController {
                 }
             }
         } catch (Exception e) {
-            LOG.warn(e.getMessage());
+            LOG.error(e.toString());
             ServiceResult result = ServiceResult.failure(-99, "发生错误");
             return result;
         }

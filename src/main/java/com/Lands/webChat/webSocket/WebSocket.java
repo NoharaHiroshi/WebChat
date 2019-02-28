@@ -93,6 +93,12 @@ public class WebSocket {
         this.session = session;
         this.userId = userId;
         this.user = userService.getUser(userId);
+        for(WebSocket item: webSocketSet) {
+            if(item.userId.equals(userId)) {
+                LOG.info("用户【" + this.user.getName() + "】已登录，请勿重复登录");
+                return;
+            }
+        }
         LOG.info("用户【" + this.user.getName() + "】登录");
         OnlineAddCount();
         webSocketSet.add(this);
