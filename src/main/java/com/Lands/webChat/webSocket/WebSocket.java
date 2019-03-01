@@ -71,8 +71,6 @@ public class WebSocket {
     private Integer OnlineAddCount() {
         connectCount++;
         LOG.info("用户上线， 当前用户：" + connectCount);
-        this.user.setStatus(1);
-        userService.updateUser(this.user);
         return connectCount;
     }
 
@@ -80,8 +78,6 @@ public class WebSocket {
     private Integer OnlineSubCount() {
         connectCount--;
         LOG.info("用户下线， 当前用户：" + connectCount);
-        this.user.setStatus(0);
-        userService.updateUser(this.user);
         return connectCount;
     }
 
@@ -92,21 +88,50 @@ public class WebSocket {
     public void onOpen(Session session, @PathParam("userId") String userId) {
         this.session = session;
         this.userId = userId;
-        this.user = userService.getUser(userId);
+        this.user = User.getUser(userService.getUser(userId));
+
+        Gson json = new Gson();
+
+        // 1. 获取已登录用户信息
+        HashMap<String, Object> onlineUserMsgObj = new HashMap<>();
+        onlineUserMsgObj.put("msgType", "onlineUser");
+        ArrayList<User> onlineUserList = new ArrayList<>();
+        for(WebSocket item: webSocketSet) {
+            if(!item.userId.equals(userId)){
+                onlineUserList.add(item.user);
+            }
+        }
+        onlineUserMsgObj.put("userList", onlineUserList);
+        String onlineUserMsg = json.toJson(onlineUserMsgObj);
+        try{
+            LOG.info("用户【" + this.user.getName() + "】登录");
+            this.sendMessage(onlineUserMsg);
+        }catch (Exception e) {
+            LOG.error(e.getMessage());
+        }
+        // 避免用户重复登录
         for(WebSocket item: webSocketSet) {
             if(item.userId.equals(userId)) {
                 LOG.info("用户【" + this.user.getName() + "】已登录，请勿重复登录");
                 return;
             }
         }
-        LOG.info("用户【" + this.user.getName() + "】登录");
+
+        // 1.广播当前用户登录信息
+        HashMap<String, Object> loginBroadcastMsgObj = new HashMap<>();
+        loginBroadcastMsgObj.put("msgType", "login");
+        loginBroadcastMsgObj.put("user", user);
+        String loginBroadcastMsg = json.toJson(loginBroadcastMsgObj);
+
+        for(WebSocket item: webSocketSet) {
+            try{
+                item.sendMessage(loginBroadcastMsg);
+            }catch (Exception e) {
+                LOG.error(e.getMessage());
+            }
+        }
         OnlineAddCount();
         webSocketSet.add(this);
-        try {
-            this.sendMessage("Connection Success!");
-        } catch (Exception e) {
-            System.out.println(e.toString());
-        }
     }
 
     /**
@@ -115,6 +140,20 @@ public class WebSocket {
     @OnClose
     public void onClose(@PathParam("userId") String userId) {
         LOG.info("用户【" + this.user.getName() + "】退出");
+        // 1.广播当前用户退出信息
+        Gson json = new Gson();
+        HashMap<String, Object> logoutBroadcastMsgObj = new HashMap<>();
+        logoutBroadcastMsgObj.put("msgType", "logout");
+        logoutBroadcastMsgObj.put("user", user);
+        String logoutBroadcastMsg = json.toJson(logoutBroadcastMsgObj);
+
+        for(WebSocket item: webSocketSet) {
+            try{
+                item.sendMessage(logoutBroadcastMsg);
+            }catch (Exception e) {
+                LOG.error(e.getMessage());
+            }
+        }
         OnlineSubCount();
         webSocketSet.remove(this);
     }
