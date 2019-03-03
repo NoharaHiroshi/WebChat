@@ -45,7 +45,7 @@ public class WebSocket {
     private static Integer connectCount = 0;
 
     // 存放每个连接对象的session
-    private static CopyOnWriteArraySet<WebSocket> webSocketSet = new CopyOnWriteArraySet<WebSocket>();
+    private static HashMap<String, WebSocket> webSocketSet = new HashMap<>();
 
     // 会话实例
     private Session session;
@@ -66,6 +66,45 @@ public class WebSocket {
 
     @Autowired
     public void setSessionService(SessionService sessionService) {WebSocket.sessionService = sessionService; }
+
+    /**
+     * 构建消息
+     * @param msgType 发送指令信息类型
+     */
+    private String structMsg(String msgType){
+        Gson json = new Gson();
+        HashMap<String, Object> msgObj = new HashMap<>();
+        msgObj.put("msgType", msgType);
+        // 获取当前已登录用户
+        if(msgType.equals("getOnlineUser")){
+            ArrayList<User> userList = new ArrayList<>();
+            for(HashMap.Entry<String, WebSocket> item: webSocketSet.entrySet()) {
+                userList.add(item.getValue().user);
+            }
+            msgObj.put("userList", userList);
+        // 广播当前用户登录信息
+        }else if(msgType.equals("broadcastLoginInfo")){
+            msgObj.put("user", user);
+        // 广播当前用户退出信息
+        }else if(msgType.equals("broadcastLogoutInfo")){
+            msgObj.put("user", user);
+        }
+        return json.toJson(msgObj);
+    }
+
+    /**
+     * 广播用户消息
+     * @param Msg 要发送的用户信息
+     */
+    private void broadcastMsg(String Msg) {
+        for(HashMap.Entry<String, WebSocket> item: webSocketSet.entrySet()) {
+            try{
+                item.getValue().sendMessage(Msg);
+            }catch (Exception e) {
+                LOG.error(e.getMessage());
+            }
+        }
+    }
 
     // 上线
     private Integer OnlineAddCount() {
@@ -90,48 +129,28 @@ public class WebSocket {
         this.userId = userId;
         this.user = User.getUser(userService.getUser(userId));
 
-        Gson json = new Gson();
-
-        // 1. 获取已登录用户信息
-        HashMap<String, Object> onlineUserMsgObj = new HashMap<>();
-        onlineUserMsgObj.put("msgType", "onlineUser");
-        ArrayList<User> onlineUserList = new ArrayList<>();
-        for(WebSocket item: webSocketSet) {
-            if(!item.userId.equals(userId)){
-                onlineUserList.add(item.user);
-            }
-        }
-        onlineUserMsgObj.put("userList", onlineUserList);
-        String onlineUserMsg = json.toJson(onlineUserMsgObj);
+        // 1. 发送已登录的用户信息
+        String onlineUserMsg = structMsg("getOnlineUser");
         try{
-            LOG.info("用户【" + this.user.getName() + "】登录");
             this.sendMessage(onlineUserMsg);
         }catch (Exception e) {
             LOG.error(e.getMessage());
         }
+
         // 避免用户重复登录
-        for(WebSocket item: webSocketSet) {
-            if(item.userId.equals(userId)) {
+        for(HashMap.Entry<String, WebSocket> item: webSocketSet.entrySet()) {
+            if(item.getValue().userId.equals(userId)) {
                 LOG.info("用户【" + this.user.getName() + "】已登录，请勿重复登录");
                 return;
             }
         }
 
-        // 1.广播当前用户登录信息
-        HashMap<String, Object> loginBroadcastMsgObj = new HashMap<>();
-        loginBroadcastMsgObj.put("msgType", "login");
-        loginBroadcastMsgObj.put("user", user);
-        String loginBroadcastMsg = json.toJson(loginBroadcastMsgObj);
+        // 2.广播当前用户登录信息
+        String loginBroadcastMsg = structMsg("broadcastLoginInfo");
+        broadcastMsg(loginBroadcastMsg);
 
-        for(WebSocket item: webSocketSet) {
-            try{
-                item.sendMessage(loginBroadcastMsg);
-            }catch (Exception e) {
-                LOG.error(e.getMessage());
-            }
-        }
         OnlineAddCount();
-        webSocketSet.add(this);
+        webSocketSet.put(userId, this);
     }
 
     /**
@@ -141,21 +160,21 @@ public class WebSocket {
     public void onClose(@PathParam("userId") String userId) {
         LOG.info("用户【" + this.user.getName() + "】退出");
         // 1.广播当前用户退出信息
-        Gson json = new Gson();
-        HashMap<String, Object> logoutBroadcastMsgObj = new HashMap<>();
-        logoutBroadcastMsgObj.put("msgType", "logout");
-        logoutBroadcastMsgObj.put("user", user);
-        String logoutBroadcastMsg = json.toJson(logoutBroadcastMsgObj);
-
-        for(WebSocket item: webSocketSet) {
-            try{
-                item.sendMessage(logoutBroadcastMsg);
-            }catch (Exception e) {
-                LOG.error(e.getMessage());
-            }
-        }
+//        Gson json = new Gson();
+//        HashMap<String, Object> logoutBroadcastMsgObj = new HashMap<>();
+//        logoutBroadcastMsgObj.put("msgType", "logout");
+//        logoutBroadcastMsgObj.put("user", user);
+//        String logoutBroadcastMsg = json.toJson(logoutBroadcastMsgObj);
+//
+//        for(WebSocket item: webSocketSet) {
+//            try{
+//                item.sendMessage(logoutBroadcastMsg);
+//            }catch (Exception e) {
+//                LOG.error(e.getMessage());
+//            }
+//        }
         OnlineSubCount();
-        webSocketSet.remove(this);
+        webSocketSet.remove(this.userId);
     }
 
     /**
@@ -169,9 +188,9 @@ public class WebSocket {
     /**
      * 处理客户端发来的消息
      */
-    public Message messageHandler(String message) {
+    public HashMap<String, Object> messageHandler(String message) {
         Gson json = new Gson();
-        Message msg = json.fromJson(message, Message.class);
+        HashMap<String, Object> msg = json.fromJson(message, HashMap.class);
         LOG.info("用户【" + this.user.getName() + "】发送信息： " + msg.toString());
         return msg;
     }
