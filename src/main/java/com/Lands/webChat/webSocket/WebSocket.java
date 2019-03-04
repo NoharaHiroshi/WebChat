@@ -79,7 +79,9 @@ public class WebSocket {
         if(msgType.equals("getOnlineUser")){
             ArrayList<User> userList = new ArrayList<>();
             for(HashMap.Entry<String, WebSocket> item: webSocketSet.entrySet()) {
-                userList.add(item.getValue().user);
+                if(!item.getValue().userId.equals(userId)){
+                    userList.add(item.getValue().user);
+                }
             }
             msgObj.put("userList", userList);
         // 广播当前用户登录信息
@@ -98,10 +100,12 @@ public class WebSocket {
      */
     private void broadcastMsg(String Msg) {
         for(HashMap.Entry<String, WebSocket> item: webSocketSet.entrySet()) {
-            try{
-                item.getValue().sendMessage(Msg);
-            }catch (Exception e) {
-                LOG.error(e.getMessage());
+            if(!item.getValue().userId.equals(userId)){
+                try{
+                    item.getValue().sendMessage(Msg);
+                }catch (Exception e) {
+                    LOG.error(e.getMessage());
+                }
             }
         }
     }
@@ -157,22 +161,8 @@ public class WebSocket {
      * 连接关闭的方法,这个方法运行的时候已经断开了连接，因此不能再向客户端发送信息了
      */
     @OnClose
-    public void onClose(@PathParam("userId") String userId) {
+    public void onClose() {
         LOG.info("用户【" + this.user.getName() + "】退出");
-        // 1.广播当前用户退出信息
-//        Gson json = new Gson();
-//        HashMap<String, Object> logoutBroadcastMsgObj = new HashMap<>();
-//        logoutBroadcastMsgObj.put("msgType", "logout");
-//        logoutBroadcastMsgObj.put("user", user);
-//        String logoutBroadcastMsg = json.toJson(logoutBroadcastMsgObj);
-//
-//        for(WebSocket item: webSocketSet) {
-//            try{
-//                item.sendMessage(logoutBroadcastMsg);
-//            }catch (Exception e) {
-//                LOG.error(e.getMessage());
-//            }
-//        }
         OnlineSubCount();
         webSocketSet.remove(this.userId);
     }
